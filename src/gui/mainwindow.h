@@ -196,25 +196,41 @@ signals:
 
     void resetEKFEstimator(bool resetOnlyGraph);
 
-    void updateConfigSonar(int stepSize, int rangeSonar,int frequencyRange,int numberOfSamples);
+    void updateConfigSonar(int stepSize, int rangeSonar, int frequencyRange, int numberOfSamples);
 
     void updateAngleCamera(int angleCamera);
 
     void updateLightIntensity(int intensityLight);
 
 private:
-    QLabel *distanceToBottom, *depth, *plotOfPosition, *sonarLabel, *sonarTicks, *movementStrengthLabel;
-    QLabel *currentSonarRange, *sonarStepSizeLabel, *currentSonarStepSize, *sonarImageLabel, *currentStrengthXYMovement;
-    QLabel *lightLabel, *cameraImageLabel, *lightTicks, *currentLightIntensity, *cameraAngleLabel;
-    QLabel *currentCameraAngle, *cameraAngleTicks;
+
+    QLabel *sonarLabel, *sonarTicks, *movementStrengthLabel;
+
+
+    QLabel *distanceToBottom, *depth, *plotOfPosition;
+    QLabel;
+    QLabel;
+    QLabel;
+    QLabel;
+    QLabel;
+    QLabel;
+    QLabel;
+    QLabel;
+    QLabel;
+    QLabel;
+    QLabel;
+//    QLabel *currentSonarRange, *sonarStepSizeLabel, *currentSonarStepSize, *sonarImageLabel, *currentStrengthXYMovement;
+
+//    QLabel *lightLabel, *lightTicks, *currentLightIntensity, *cameraAngleLabel;
+    QLabel *currentCameraAngle, *cameraAngleTicks, *cameraImageLabel;
     QLabel *currentXThrustLabel, *currentYThrustLabel, *currentHeightDesiredLabel, *currentDesiredRollLabel, *currentDesiredPitchLabel, *currentDesiredYawLabel, *desiredPositionLabel;
     QLabel *currentPositionZLabel, *currentPositionLabel, *currentPositionYawLabel, *currentPositionXLabel, *currentPositionRollLabel, *currentPositionPitchLabel, *currentPositionYLabel;
     QLabel *currentDistanceToBottom, *currentDistanceDVL1, *currentDistanceDVL2, *currentDistanceDVL3, *currentDistanceDVL4;
-    QLabel *numberOfSamplesLabel,*numberOfSamplesTicks,*currentNumberOfSamples;
-    QLabel *frequencyRangeLabel,*frequencyRangeTicks,*currentfrequencyRange;
+//    QLabel *numberOfSamplesLabel, *numberOfSamplesTicks, *currentNumberOfSamples;
+//    QLabel *frequencyRangeLabel, *frequencyRangeTicks, *currentfrequencyRange;
     QPushButton *resetEKF, *holdPos, *resetGraphEKF;
-    QSlider *rangeSonarSlider, *angularStepSizeSlider, *lightSlider, *cameraAngleSlider, *strengthXYMovementSlider,*numberOfSamplesSlider,*frequencyRangeSlider;
-    int sonarRange, sonarStepSize, lightIntensity, cameraAngleDesired,frequencyRangeValue,numberOfSamplesValue;
+//    QSlider *rangeSonarSlider, *angularStepSizeSlider, *lightSlider, *cameraAngleSlider, *strengthXYMovementSlider, *numberOfSamplesSlider, *frequencyRangeSlider;
+    int sonarRange, sonarStepSize, lightIntensity, cameraAngleDesired, frequencyRangeValue, numberOfSamplesValue;
     QCustomPlot *customPlot;
     QVector<double> xPositionRobot, yPositionRobot, yawPositionRobot;
     QPixmap *sonarImage, *cameraImage;
@@ -284,8 +300,9 @@ private:
         numberOfSamplesLabel->setGeometry(
                 QRect(QPoint(screenWidth - 1.3 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
         numberOfSamplesTicks = new QLabel("200                         1000                                  2000",
-                                this);
-        numberOfSamplesTicks->setGeometry(QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
+                                          this);
+        numberOfSamplesTicks->setGeometry(
+                QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
         currentNumberOfSamples = new QLabel("1000", this);
         currentNumberOfSamples->setGeometry(
                 QRect(QPoint(screenWidth - 0.8 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
@@ -304,8 +321,9 @@ private:
         frequencyRangeLabel->setGeometry(
                 QRect(QPoint(screenWidth - 1.3 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
         frequencyRangeTicks = new QLabel("500                              750                              1000",
-                                this);
-        frequencyRangeTicks->setGeometry(QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
+                                         this);
+        frequencyRangeTicks->setGeometry(
+                QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
         currentfrequencyRange = new QLabel("750", this);
         currentfrequencyRange->setGeometry(
                 QRect(QPoint(screenWidth - 0.8 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
@@ -533,20 +551,24 @@ private:
 
         currentDistanceToBottom = new QLabel("DVL distances: ", this);
         currentDistanceToBottom->setGeometry(
-                QRect(QPoint(screenWidth / 2 - screenWidth / 5 -screenWidth/25, yPositionOfLabels - 40), QSize(200, 45)));
+                QRect(QPoint(screenWidth / 2 - screenWidth / 5 - screenWidth / 25, yPositionOfLabels - 40),
+                      QSize(200, 45)));
 
         currentDistanceDVL1 = new QLabel("Distance 1: ", this);
         currentDistanceDVL1->setGeometry(
-                QRect(QPoint(screenWidth / 2 - screenWidth / 5 -screenWidth/25, yPositionOfLabels ), QSize(200, 45)));
+                QRect(QPoint(screenWidth / 2 - screenWidth / 5 - screenWidth / 25, yPositionOfLabels), QSize(200, 45)));
         currentDistanceDVL2 = new QLabel("Distance 2: ", this);
         currentDistanceDVL2->setGeometry(
-                QRect(QPoint(screenWidth / 2 - screenWidth / 5 -screenWidth/25 + screenWidth/12, yPositionOfLabels ), QSize(200, 45)));
+                QRect(QPoint(screenWidth / 2 - screenWidth / 5 - screenWidth / 25 + screenWidth / 12,
+                             yPositionOfLabels), QSize(200, 45)));
         currentDistanceDVL3 = new QLabel("Distance 3: ", this);
         currentDistanceDVL3->setGeometry(
-                QRect(QPoint(screenWidth / 2 - screenWidth / 5 -screenWidth/25, yPositionOfLabels +40), QSize(200, 45)));
+                QRect(QPoint(screenWidth / 2 - screenWidth / 5 - screenWidth / 25, yPositionOfLabels + 40),
+                      QSize(200, 45)));
         currentDistanceDVL4 = new QLabel("Distance 4: ", this);
         currentDistanceDVL4->setGeometry(
-                QRect(QPoint(screenWidth / 2  - screenWidth / 5 -screenWidth/25 + screenWidth/12, yPositionOfLabels +40), QSize(200, 45)));
+                QRect(QPoint(screenWidth / 2 - screenWidth / 5 - screenWidth / 25 + screenWidth / 12,
+                             yPositionOfLabels + 40), QSize(200, 45)));
 
 
     }
@@ -579,7 +601,7 @@ private:
     }
 
 public:
-    void updateDesiredPosition(){
+    void updateDesiredPosition() {
         rclcpp::sleep_for(std::chrono::seconds(200000000));// should be 0.2 seconds
 //        rclcpp::Duration(0.2).sleep();
         double tmpNumber;

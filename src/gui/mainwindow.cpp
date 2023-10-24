@@ -182,7 +182,7 @@ void MainWindow::handleCameraAngleSliderReleased() {
 //move x body axis
 void MainWindow::updateRightX(double value) {
 //    std::cout << "Right X: " << value << std::endl;
-    this->desiredYMovement = this->strengthXYMovement * value;
+    this->desiredYMovement = 0.5*this->strengthXYMovement * value;
     QString xstr = "Thrust Y: " + QString::number(this->desiredYMovement, 'f', 2);
     this->currentYThrustLabel->setText(xstr);
 }
@@ -190,7 +190,7 @@ void MainWindow::updateRightX(double value) {
 //move y body axis
 void MainWindow::updateRightY(double value) {
 //    std::cout << "Right Y: " << value << std::endl;
-    this->desiredXMovement = -this->strengthXYMovement * value;
+    this->desiredXMovement = -0.3*this->strengthXYMovement * value;
     QString xstr = "Thrust X: " + QString::number(this->desiredXMovement, 'f', 2);
     this->currentXThrustLabel->setText(xstr);
 }
@@ -279,7 +279,7 @@ void MainWindow::updateR1Button(bool pressed) {
 //    std::cout << "R1 button Pressed: " << pressed << std::endl;
 
     if (pressed) {
-        if (abs(this->desiredHeight - 0.02 - this->currentHeight) < 1.0f) {
+        if (abs(this->desiredHeight - 0.02 - this->currentHeight) < 10.0f) {
             this->desiredHeight = this->desiredHeight - 0.02;
         }
         QString xstr = "Height: " + QString::number(this->desiredHeight, 'f', 2);
@@ -291,7 +291,7 @@ void MainWindow::updateR1Button(bool pressed) {
 void MainWindow::updateR2Button(double pressedValue) {
 //    std::cout << "R2 button Pressed: " << pressedValue << std::endl;
     if (pressedValue>0.2) {
-        if (abs(this->desiredHeight + 0.02 - this->currentHeight) < 1.0f) {
+        if (abs(this->desiredHeight + 0.02 - this->currentHeight) < 10.0f) {
             this->desiredHeight = this->desiredHeight + 0.02;
         }
         QString xstr = "Height: " + QString::number(this->desiredHeight, 'f', 2);
