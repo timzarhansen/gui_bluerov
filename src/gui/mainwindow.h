@@ -11,7 +11,7 @@ class MainWindow : public QMainWindow {
 Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = nullptr) {
-        this->sonarRange = 2;
+//        this->sonarRange = 2;
         this->sonarStepSize = 1;
         this->frequencyRangeValue = 750;
         this->numberOfSamplesValue = 1200;
@@ -35,7 +35,8 @@ public:
 
         this->initializationSonarWindows(xposRangeSonar, yposRangeSonar, screenWidth, sizeOfSlider);
         this->initializationCurrentPosition(screenWidth);
-        this->initializationSonarImage(screenWidth);
+        this->initializationPing360Image(screenWidth);
+        this->initializationMicronImage(screenWidth);
         this->initializationCameraImage(screenWidth);
         this->initializationSliderCameraLight(sizeOfSlider);
         this->initializationGamepad(screenWidth);
@@ -159,7 +160,9 @@ public slots:
                             Eigen::MatrixXd covariance);//covariance is just 6 values
     void updateCameraImage(QPixmap cameraImage);
 
-    void updateSonarImage(QPixmap sonarImage);
+    void updatePing360SonarImage(QPixmap sonarImage);
+
+    void updateMicronSonarImage(QPixmap sonarImage);
 
     void updateDVLState(double distance1, double distance2, double distance3, double distance4);
 
@@ -204,36 +207,39 @@ signals:
 
 private:
 
-    QLabel *sonarLabel, *sonarTicks, *movementStrengthLabel;
-
+    QLabel *movementStrengthLabel;
+//    QLabel *sonarLabel, *sonarTicks;
 
     QLabel *distanceToBottom, *depth, *plotOfPosition;
-    QLabel;
-    QLabel;
-    QLabel;
-    QLabel;
-    QLabel;
-    QLabel;
-    QLabel;
-    QLabel;
-    QLabel;
-    QLabel;
-    QLabel;
-//    QLabel *currentSonarRange, *sonarStepSizeLabel, *currentSonarStepSize, *sonarImageLabel, *currentStrengthXYMovement;
+    QLabel *currentStrengthXYMovement, *ping360SonarLabel, *micronSonarLabel;
+//    QLabel;
+//    QLabel;
+//    QLabel;
+//    QLabel;
+//    QLabel;
+//    QLabel;
+//    QLabel;
+//    QLabel;
+//    QLabel;
+//    QLabel;
+//    QLabel *currentSonarRange, *sonarStepSizeLabel, *currentSonarStepSize, , ;
 
-//    QLabel *lightLabel, *lightTicks, *currentLightIntensity, *cameraAngleLabel;
-    QLabel *currentCameraAngle, *cameraAngleTicks, *cameraImageLabel;
+//    QLabel , , , ;
+    QLabel *currentCameraAngle, *cameraAngleTicks, *cameraImageLabel, *cameraAngleLabel;
     QLabel *currentXThrustLabel, *currentYThrustLabel, *currentHeightDesiredLabel, *currentDesiredRollLabel, *currentDesiredPitchLabel, *currentDesiredYawLabel, *desiredPositionLabel;
     QLabel *currentPositionZLabel, *currentPositionLabel, *currentPositionYawLabel, *currentPositionXLabel, *currentPositionRollLabel, *currentPositionPitchLabel, *currentPositionYLabel;
     QLabel *currentDistanceToBottom, *currentDistanceDVL1, *currentDistanceDVL2, *currentDistanceDVL3, *currentDistanceDVL4;
+    QLabel *lightLabel, *currentLightIntensity, *lightTicks;
 //    QLabel *numberOfSamplesLabel, *numberOfSamplesTicks, *currentNumberOfSamples;
 //    QLabel *frequencyRangeLabel, *frequencyRangeTicks, *currentfrequencyRange;
     QPushButton *resetEKF, *holdPos, *resetGraphEKF;
-//    QSlider *rangeSonarSlider, *angularStepSizeSlider, *lightSlider, *cameraAngleSlider, *strengthXYMovementSlider, *numberOfSamplesSlider, *frequencyRangeSlider;
-    int sonarRange, sonarStepSize, lightIntensity, cameraAngleDesired, frequencyRangeValue, numberOfSamplesValue;
+    QSlider *strengthXYMovementSlider, *lightSlider, *cameraAngleSlider;
+//    QSlider *rangeSonarSlider, *angularStepSizeSlider, , , *strengthXYMovementSlider, *numberOfSamplesSlider, *frequencyRangeSlider;
+    int sonarStepSize, lightIntensity, cameraAngleDesired, frequencyRangeValue, numberOfSamplesValue;
+//    int sonarRange;
     QCustomPlot *customPlot;
     QVector<double> xPositionRobot, yPositionRobot, yawPositionRobot;
-    QPixmap *sonarImage, *cameraImage;
+    QPixmap *ping360Image, *cameraImage, *micronImage;
     QGamepad *m_gamepad;
     bool connectedGamepad;
     std::atomic<double> desiredHeight, desiredRoll, desiredPitch, desiredYaw, desiredXMovement, desiredYMovement;
@@ -247,89 +253,89 @@ private:
 private:
     void initializationSonarWindows(int xposRangeSonar, int yposRangeSonar, int screenWidth, int sizeOfSlider) {
         //range sonar
-        rangeSonarSlider = new QSlider(Qt::Horizontal, this);
-
-        rangeSonarSlider->setFocusPolicy(Qt::StrongFocus);
-        //rangeSonarSlider->setTickPosition(QSlider::TicksBelow);
-        //rangeSonarSlider->setTickInterval(5);
-        rangeSonarSlider->setMaximum(60);
-        rangeSonarSlider->setMinimum(2);
-        rangeSonarSlider->setGeometry(QRect(QPoint(xposRangeSonar, yposRangeSonar), QSize(sizeOfSlider, 20)));
-        sonarLabel = new QLabel("Sonar Range:", this);
-        sonarLabel->setGeometry(QRect(QPoint(screenWidth - 1.3 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
-        sonarTicks = new QLabel("2                                       30                                       60",
-                                this);
-        sonarTicks->setGeometry(QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
-        currentSonarRange = new QLabel("0", this);
-        currentSonarRange->setGeometry(
-                QRect(QPoint(screenWidth - 0.8 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
-        connect(rangeSonarSlider, &QSlider::valueChanged, this, &MainWindow::handleSonarSlider);
-        connect(rangeSonarSlider, &QSlider::sliderReleased, this, &MainWindow::handleSonarSliderReleased);
-        this->rangeSonarSlider->setSliderPosition(30);
+//        rangeSonarSlider = new QSlider(Qt::Horizontal, this);
+//
+//        rangeSonarSlider->setFocusPolicy(Qt::StrongFocus);
+//        //rangeSonarSlider->setTickPosition(QSlider::TicksBelow);
+//        //rangeSonarSlider->setTickInterval(5);
+//        rangeSonarSlider->setMaximum(60);
+//        rangeSonarSlider->setMinimum(2);
+//        rangeSonarSlider->setGeometry(QRect(QPoint(xposRangeSonar, yposRangeSonar), QSize(sizeOfSlider, 20)));
+//        sonarLabel = new QLabel("Sonar Range:", this);
+//        sonarLabel->setGeometry(QRect(QPoint(screenWidth - 1.3 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
+//        sonarTicks = new QLabel("2                                       30                                       60",
+//                                this);
+//        sonarTicks->setGeometry(QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
+//        currentSonarRange = new QLabel("0", this);
+//        currentSonarRange->setGeometry(
+//                QRect(QPoint(screenWidth - 0.8 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
+//        connect(rangeSonarSlider, &QSlider::valueChanged, this, &MainWindow::handleSonarSlider);
+//        connect(rangeSonarSlider, &QSlider::sliderReleased, this, &MainWindow::handleSonarSliderReleased);
+//        this->rangeSonarSlider->setSliderPosition(30);
 
         //angular Step size
         yposRangeSonar = yposRangeSonar + 100;
-        angularStepSizeSlider = new QSlider(Qt::Horizontal, this);
-        angularStepSizeSlider->setFocusPolicy(Qt::StrongFocus);
-        angularStepSizeSlider->setMaximum(10);
-        angularStepSizeSlider->setMinimum(1);
-        angularStepSizeSlider->setGeometry(QRect(QPoint(xposRangeSonar, yposRangeSonar), QSize(sizeOfSlider, 20)));
-        sonarStepSizeLabel = new QLabel("Step Size:", this);
-        sonarStepSizeLabel->setGeometry(
-                QRect(QPoint(screenWidth - 1.3 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
-        sonarTicks = new QLabel("1                                       5                                       10",
-                                this);
-        sonarTicks->setGeometry(QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
-        currentSonarStepSize = new QLabel("0", this);
-        currentSonarStepSize->setGeometry(
-                QRect(QPoint(screenWidth - 0.8 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
-        connect(angularStepSizeSlider, &QSlider::valueChanged, this, &MainWindow::handleSonarStepSlider);
-        connect(angularStepSizeSlider, &QSlider::sliderReleased, this, &MainWindow::handleSonarStepReleased);
-        this->angularStepSizeSlider->setSliderPosition(5);
+//        angularStepSizeSlider = new QSlider(Qt::Horizontal, this);
+//        angularStepSizeSlider->setFocusPolicy(Qt::StrongFocus);
+//        angularStepSizeSlider->setMaximum(10);
+//        angularStepSizeSlider->setMinimum(1);
+//        angularStepSizeSlider->setGeometry(QRect(QPoint(xposRangeSonar, yposRangeSonar), QSize(sizeOfSlider, 20)));
+//        sonarStepSizeLabel = new QLabel("Step Size:", this);
+//        sonarStepSizeLabel->setGeometry(
+//                QRect(QPoint(screenWidth - 1.3 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
+//        sonarTicks = new QLabel("1                                       5                                       10",
+//                                this);
+//        sonarTicks->setGeometry(QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
+//        currentSonarStepSize = new QLabel("0", this);
+//        currentSonarStepSize->setGeometry(
+//                QRect(QPoint(screenWidth - 0.8 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
+//        connect(angularStepSizeSlider, &QSlider::valueChanged, this, &MainWindow::handleSonarStepSlider);
+//        connect(angularStepSizeSlider, &QSlider::sliderReleased, this, &MainWindow::handleSonarStepReleased);
+//        this->angularStepSizeSlider->setSliderPosition(5);
 
 
 
         // set number of samples for each sonar ray
         yposRangeSonar = yposRangeSonar + 100;
-        numberOfSamplesSlider = new QSlider(Qt::Horizontal, this);
-        numberOfSamplesSlider->setFocusPolicy(Qt::StrongFocus);
-        numberOfSamplesSlider->setMaximum(2000);
-        numberOfSamplesSlider->setMinimum(200);
-        numberOfSamplesSlider->setGeometry(QRect(QPoint(xposRangeSonar, yposRangeSonar), QSize(sizeOfSlider, 20)));
-        numberOfSamplesLabel = new QLabel("Number Of Samples:", this);
-        numberOfSamplesLabel->setGeometry(
-                QRect(QPoint(screenWidth - 1.3 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
-        numberOfSamplesTicks = new QLabel("200                         1000                                  2000",
-                                          this);
-        numberOfSamplesTicks->setGeometry(
-                QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
-        currentNumberOfSamples = new QLabel("1000", this);
-        currentNumberOfSamples->setGeometry(
-                QRect(QPoint(screenWidth - 0.8 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
-        connect(numberOfSamplesSlider, &QSlider::valueChanged, this, &MainWindow::handleNumberOfSamplesSlider);
-        connect(numberOfSamplesSlider, &QSlider::sliderReleased, this, &MainWindow::handleNumberOfSamplesReleased);
-        this->numberOfSamplesSlider->setSliderPosition(1000);
+//        numberOfSamplesSlider = new QSlider(Qt::Horizontal, this);
+//        numberOfSamplesSlider->setFocusPolicy(Qt::StrongFocus);
+//        numberOfSamplesSlider->setMaximum(2000);
+//        numberOfSamplesSlider->setMinimum(200);
+//        numberOfSamplesSlider->setGeometry(QRect(QPoint(xposRangeSonar, yposRangeSonar), QSize(sizeOfSlider, 20)));
+//        numberOfSamplesLabel = new QLabel("Number Of Samples:", this);
+//        numberOfSamplesLabel->setGeometry(
+//                QRect(QPoint(screenWidth - 1.3 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
+//        numberOfSamplesTicks = new QLabel("200                         1000                                  2000",
+//                                          this);
+//        numberOfSamplesTicks->setGeometry(
+//                QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
+//        currentNumberOfSamples = new QLabel("1000", this);
+//        currentNumberOfSamples->setGeometry(
+//                QRect(QPoint(screenWidth - 0.8 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
+//        connect(numberOfSamplesSlider, &QSlider::valueChanged, this, &MainWindow::handleNumberOfSamplesSlider);
+//        connect(numberOfSamplesSlider, &QSlider::sliderReleased, this, &MainWindow::handleNumberOfSamplesReleased);
+//        this->numberOfSamplesSlider->setSliderPosition(1000);
 
         // set transmit frequency
         yposRangeSonar = yposRangeSonar + 100;
-        frequencyRangeSlider = new QSlider(Qt::Horizontal, this);
-        frequencyRangeSlider->setFocusPolicy(Qt::StrongFocus);
-        frequencyRangeSlider->setMaximum(1000);
-        frequencyRangeSlider->setMinimum(500);
-        frequencyRangeSlider->setGeometry(QRect(QPoint(xposRangeSonar, yposRangeSonar), QSize(sizeOfSlider, 20)));
-        frequencyRangeLabel = new QLabel("Frequency Range:", this);
-        frequencyRangeLabel->setGeometry(
-                QRect(QPoint(screenWidth - 1.3 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
-        frequencyRangeTicks = new QLabel("500                              750                              1000",
-                                         this);
-        frequencyRangeTicks->setGeometry(
-                QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
-        currentfrequencyRange = new QLabel("750", this);
-        currentfrequencyRange->setGeometry(
-                QRect(QPoint(screenWidth - 0.8 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
-        connect(frequencyRangeSlider, &QSlider::valueChanged, this, &MainWindow::handleFrequencyRangeSlider);
-        connect(frequencyRangeSlider, &QSlider::sliderReleased, this, &MainWindow::handleFrequencyRangeReleased);
-        this->frequencyRangeSlider->setSliderPosition(750);
+//        frequencyRangeSlider = new QSlider(Qt::Horizontal, this);
+//        frequencyRangeSlider->setFocusPolicy(Qt::StrongFocus);
+//        frequencyRangeSlider->setMaximum(1000);
+//        frequencyRangeSlider->setMinimum(500);
+//        frequencyRangeSlider->setGeometry(QRect(QPoint(xposRangeSonar, yposRangeSonar), QSize(sizeOfSlider, 20)));
+//        frequencyRangeLabel = new QLabel("Frequency Range:", this);
+//        frequencyRangeLabel->setGeometry(
+//                QRect(QPoint(screenWidth - 1.3 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
+//        frequencyRangeTicks = new QLabel("500                              750                              1000",
+//                                         this);
+//        frequencyRangeTicks->setGeometry(
+//                QRect(QPoint(xposRangeSonar - 3, yposRangeSonar + 25), QSize(sizeOfSlider, 15)));
+//        currentfrequencyRange = new QLabel("750", this);
+//        currentfrequencyRange->setGeometry(
+//                QRect(QPoint(screenWidth - 0.8 * sizeOfSlider, yposRangeSonar - 50), QSize(200, 50)));
+//        connect(frequencyRangeSlider, &QSlider::valueChanged, this, &MainWindow::handleFrequencyRangeSlider);
+//        connect(frequencyRangeSlider, &QSlider::sliderReleased, this, &MainWindow::handleFrequencyRangeReleased);
+//        this->frequencyRangeSlider->setSliderPosition(750);
         //
 
         //send initial values to sonar
@@ -403,15 +409,26 @@ private:
 
     }
 
-    void initializationSonarImage(int screenWidth) {
-        int sizeSonarImage = 500;
-        this->sonarImageLabel = new QLabel("exampleImage", this);
-        this->sonarImageLabel->setGeometry(
-                QRect(QPoint(screenWidth - sizeSonarImage - 50, 500), QSize(sizeSonarImage, sizeSonarImage)));
+    void initializationPing360Image(int screenWidth) {
+        int sizeSonarImage = 480;
+        this->ping360SonarLabel = new QLabel("ping360", this);
+        this->ping360SonarLabel->setGeometry(
+                QRect(QPoint(screenWidth - sizeSonarImage - 50, 520), QSize(sizeSonarImage, sizeSonarImage)));
 
-        this->sonarImage = new QPixmap("/home/tim-linux/Pictures/file_example_JPG_100kB.jpg");
-        this->sonarImageLabel->setPixmap(
-                sonarImage->scaled(sonarImageLabel->width(), sonarImageLabel->height(), Qt::KeepAspectRatio));
+        this->ping360Image = new QPixmap("/home/tim-external/Pictures/Screenshots/blueROV2TestImage.png");
+        this->ping360SonarLabel->setPixmap(
+                ping360Image->scaled(ping360SonarLabel->width(), ping360SonarLabel->height(), Qt::KeepAspectRatio));
+    }
+
+    void initializationMicronImage(int screenWidth) {
+        int sizeSonarImage = 480;
+        this->micronSonarLabel = new QLabel("MicronImage", this);
+        this->micronSonarLabel->setGeometry(
+                QRect(QPoint(screenWidth - sizeSonarImage - 50, 30), QSize(sizeSonarImage, sizeSonarImage)));
+
+        this->micronImage = new QPixmap("/home/tim-external/Pictures/Screenshots/blueROV2TestImage.png");
+        this->micronSonarLabel->setPixmap(
+                micronImage->scaled(micronSonarLabel->width(), micronSonarLabel->height(), Qt::KeepAspectRatio));
     }
 
     void initializationCameraImage(int screenWidth) {
@@ -420,7 +437,7 @@ private:
         this->cameraImageLabel->setGeometry(
                 QRect(QPoint(screenWidth / 2 - sizeCameraImage / 2, 500), QSize(sizeCameraImage, sizeCameraImage)));
 
-        this->cameraImage = new QPixmap("/home/tim-linux/Pictures/file_example_JPG_100kB.jpg");
+        this->cameraImage = new QPixmap("/home/tim-external/Pictures/Screenshots/blueROV2TestImage.png");
         this->cameraImageLabel->setPixmap(
                 cameraImage->scaled(cameraImageLabel->width(), cameraImageLabel->height(), Qt::KeepAspectRatio));
     }

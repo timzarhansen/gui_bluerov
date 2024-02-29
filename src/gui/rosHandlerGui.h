@@ -46,16 +46,20 @@ public:
         rclcpp::QoS qos = rclcpp::QoS(rclcpp::KeepLast(1), rmw_qos_profile_sensor_data);
 
         this->subscriberPosRobot = this->create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
-                "publisherPoseEkf", qos, std::bind(&rosHandlerGui::positionCallback,
+                "/publisherPoseEkf", qos, std::bind(&rosHandlerGui::positionCallback,
                                                    this, std::placeholders::_1));
-        this->subscriberSonarImage = this->create_subscription<sensor_msgs::msg::Image>("sonar/image", qos, std::bind(
-                &rosHandlerGui::sonarImageCallback, this, std::placeholders::_1));
+        this->subscriberPing360SonarImage = this->create_subscription<sensor_msgs::msg::Image>("sonar/image", qos, std::bind(
+                &rosHandlerGui::ping360ImageCallback, this, std::placeholders::_1));
+
+        this->subscriberMicronSonarImage = this->create_subscription<sensor_msgs::msg::Image>("micron/image2", qos, std::bind(
+                &rosHandlerGui::micronImageCallback, this, std::placeholders::_1));
 //        subscriberCameraImage = this->create_subscription("cv_camera/image_raw",1000,&rosHandlerGui::cameraImageCallback,this);
         this->subscriberCameraImage = this->create_subscription<sensor_msgs::msg::CompressedImage>(
                 "camera/image_raw/compressed", qos,
                 std::bind(&rosHandlerGui::cameraImageCallback, this, std::placeholders::_1));
+        std::cout << "starting ros stuff" << std::endl;
         this->subscriberDVL = this->create_subscription<waterlinked_a50::msg::TransducerReportStamped>(
-                "dvl/transducer_report", qos, std::bind(&rosHandlerGui::DVLCallback, this, std::placeholders::_1));
+                "/velocity_estimate", qos, std::bind(&rosHandlerGui::DVLCallback, this, std::placeholders::_1));
 
 //        this->publishingDesiredState =
 //                this->create_publisher<commonbluerovmsg::msg::DesiredStateForRobot>("desiredStateOfBluerov2", qos);
@@ -78,7 +82,7 @@ public slots:
     void updateDesiredState(double desiredHeight, double desiredRoll, double desiredPitch, double desiredYaw,
                             double desiredXMovement, double desiredYMovement, bool holdPosition);
 
-//    void resetEKFEstimator(bool resetOnlyGraph);
+    void resetEKFEstimator(bool resetOnlyGraph);
 
 //    void updateConfigSonar(int stepSize, int rangeSonar, int frequencyRange, int numberOfSamples);
 
@@ -92,7 +96,9 @@ signals:
     void updatePlotPositionVectorROS(std::vector<double> xPositionRobot, std::vector<double> yPositionRobot,
                                      std::vector<double> yawPositionRobot);
 
-    void updateSonarImageROS(QPixmap sonarImage);
+    void updatePing360SonarImageROS(QPixmap sonarImage);
+
+    void updateMicronSonarImageROS(QPixmap sonarImage);
 
     void updateCameraImageROS(QPixmap cameraImage);
 
@@ -106,7 +112,8 @@ private:
     std::vector<double> xPositionRobot, yPositionRobot, yawPositionRobot;
 
     rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr subscriberPosRobot;
-    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscriberSonarImage;
+    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscriberPing360SonarImage;
+    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscriberMicronSonarImage;
     rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr subscriberCameraImage;
     rclcpp::Subscription<waterlinked_a50::msg::TransducerReportStamped>::SharedPtr subscriberDVL;
 
@@ -124,7 +131,9 @@ private:
 
     void positionCallback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg);
 
-    void sonarImageCallback(const sensor_msgs::msg::Image::SharedPtr msg);
+    void ping360ImageCallback(const sensor_msgs::msg::Image::SharedPtr msg);
+
+    void micronImageCallback(const sensor_msgs::msg::Image::SharedPtr msg);
 
     void cameraImageCallback(const sensor_msgs::msg::CompressedImage::SharedPtr msg);
 

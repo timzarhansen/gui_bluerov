@@ -42,6 +42,7 @@ void rosHandlerGui::positionCallback(const geometry_msgs::msg::PoseWithCovarianc
 
 
 void rosHandlerGui::DVLCallback(const waterlinked_a50::msg::TransducerReportStamped::SharedPtr msg) {
+//    std::cout << "test" << std::endl;
 
     emit updateDVLStateROS(msg->report.transducers[0].distance, msg->report.transducers[1].distance,
                            msg->report.transducers[2].distance, msg->report.transducers[3].distance);
@@ -64,7 +65,8 @@ void rosHandlerGui::updateLightIntensity(int intensityLight) {
 
 }
 
-void rosHandlerGui::sonarImageCallback(const sensor_msgs::msg::Image::SharedPtr msg) {
+void rosHandlerGui::ping360ImageCallback(const sensor_msgs::msg::Image::SharedPtr msg) {
+//    std::cout << "receaving image" << std::endl;
     cv_bridge::CvImagePtr cv_ptr;
     try {
         cv_ptr = cv_bridge::toCvCopy(msg, msg->encoding);
@@ -74,17 +76,39 @@ void rosHandlerGui::sonarImageCallback(const sensor_msgs::msg::Image::SharedPtr 
         return;
     }
 
-    cv_ptr = cv_bridge::cvtColor(cv_ptr, "rgb8");
+    cv::Mat testImage = cv_bridge::cvtColor(cv_ptr, "rgb8")->image;
 
-    cv::applyColorMap(cv_ptr->image, cv_ptr->image, cv::COLORMAP_JET);
-    QImage imgIn = QImage((uchar *) cv_ptr->image.data, cv_ptr->image.cols, cv_ptr->image.rows, cv_ptr->image.step,
+    cv::applyColorMap(testImage, testImage, cv::COLORMAP_JET);
+    QImage imgIn = QImage((uchar *) testImage.data, testImage.cols, testImage.rows, testImage.step,
                           QImage::Format_RGB888);
 //    QImage imgIn = QImage(&msg->data[0], msg->width, msg->height, QImage::Format_RGB888);
     imgIn = imgIn.rgbSwapped();
     QPixmap myPixMap = QPixmap::fromImage(imgIn);
-    emit updateSonarImageROS(myPixMap);
 
+    emit updatePing360SonarImageROS(myPixMap);
+}
 
+void rosHandlerGui::micronImageCallback(const sensor_msgs::msg::Image::SharedPtr msg) {
+//    std::cout << "receaving image" << std::endl;
+    cv_bridge::CvImagePtr cv_ptr;
+    try {
+        cv_ptr = cv_bridge::toCvCopy(msg, msg->encoding);
+    }
+    catch (cv_bridge::Exception &e) {
+        RCLCPP_ERROR(this->get_logger(),"cv_bridge exception: %s", e.what());
+        return;
+    }
+
+    cv::Mat testImage = cv_bridge::cvtColor(cv_ptr, "rgb8")->image;
+
+    cv::applyColorMap(testImage, testImage, cv::COLORMAP_JET);
+    QImage imgIn = QImage((uchar *) testImage.data, testImage.cols, testImage.rows, testImage.step,
+                          QImage::Format_RGB888);
+//    QImage imgIn = QImage(&msg->data[0], msg->width, msg->height, QImage::Format_RGB888);
+    imgIn = imgIn.rgbSwapped();
+    QPixmap myPixMap = QPixmap::fromImage(imgIn);
+
+    emit updateMicronSonarImageROS(myPixMap);
 }
 
 void rosHandlerGui::cameraImageCallback(const sensor_msgs::msg::CompressedImage::SharedPtr msg) {
@@ -125,7 +149,7 @@ void rosHandlerGui::updateDesiredState(double desiredHeight, double desiredRoll,
 
 }
 
-//void rosHandlerGui::resetEKFEstimator(bool resetOnlyGraph) {
+void rosHandlerGui::resetEKFEstimator(bool resetOnlyGraph) {
 //    if (not resetOnlyGraph) {
 //        commonbluerovmsg::resetekf srv;
 //        srv.request.xPos = 0;
@@ -134,8 +158,8 @@ void rosHandlerGui::updateDesiredState(double desiredHeight, double desiredRoll,
 //        srv.request.resetCovariances = true;
 //        this->clientEKF.call(srv);
 //    }
-//
-//    this->xPositionRobot.clear();
-//    this->yPositionRobot.clear();
-//    this->yawPositionRobot.clear();
-//}
+
+    this->xPositionRobot.clear();
+    this->yPositionRobot.clear();
+    this->yawPositionRobot.clear();
+}

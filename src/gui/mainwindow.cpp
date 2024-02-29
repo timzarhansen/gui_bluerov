@@ -42,81 +42,90 @@ void MainWindow::updateStateForPlotting(std::vector<double> xPositionRobot, std:
 
 }
 
-void MainWindow::updateSonarImage(QPixmap sonarImage) {
-    this->sonarImageLabel->setPixmap(
-            sonarImage.scaled(sonarImageLabel->width(), sonarImageLabel->height(), Qt::KeepAspectRatio));
+void MainWindow::updatePing360SonarImage(QPixmap sonarImage) {
+    this->ping360SonarLabel->setPixmap(
+            sonarImage.scaled(ping360SonarLabel->width(), ping360SonarLabel->height(), Qt::KeepAspectRatio));
 }
+
+
+void MainWindow::updateMicronSonarImage(QPixmap sonarImage) {
+    this->micronSonarLabel->setPixmap(
+            sonarImage.scaled(micronSonarLabel->width(), micronSonarLabel->height(), Qt::KeepAspectRatio));
+}
+
+
 
 void MainWindow::updateCameraImage(QPixmap cameraImage) {
     this->cameraImageLabel->setPixmap(
-            cameraImage.scaled(sonarImageLabel->width(), sonarImageLabel->height(), Qt::KeepAspectRatio));
+            cameraImage.scaled(ping360SonarLabel->width(), ping360SonarLabel->height(), Qt::KeepAspectRatio));
 }
 
-void MainWindow::handleSonarSlider(int sonarRange) {
+//void MainWindow::handleSonarSlider(int sonarRange) {
+//
+//    QString xstr = QString::number(sonarRange);
+//    this->sonarRange = sonarRange;
+//    this->currentSonarRange->setText(xstr);
+//
+//}
 
-    QString xstr = QString::number(sonarRange);
-    this->sonarRange = sonarRange;
-    this->currentSonarRange->setText(xstr);
-
-}
 
 
-
-void MainWindow::handleSonarSliderReleased() {
-    //send current distance to the Sonar
-//    std::cout << "sonarRange send to Sonar: " << this->sonarRange << std::endl;
-    emit this->updateConfigSonar(this->sonarStepSize, this->sonarRange,this->frequencyRangeValue,this->numberOfSamplesValue);
-}
+//void MainWindow::handleSonarSliderReleased() {
+//    //send current distance to the Sonar
+////    std::cout << "sonarRange send to Sonar: " << this->sonarRange << std::endl;
+//    emit this->updateConfigSonar(this->sonarStepSize, this->sonarRange,this->frequencyRangeValue,this->numberOfSamplesValue);
+//}
 
 void MainWindow::handleStrengthXYMovementSlider(int strength) {
     QString xstr = QString::number(((double) strength)/10.0);
     this->strengthXYMovement = ((double) strength)/10.0;
+//    std::cout << this->strengthXYMovement << std::endl;
     this->currentStrengthXYMovement->setText(xstr);
 }
 
 
 
 
-void MainWindow::handleSonarStepSlider(int angularStepSize) {
-    QString xstr = QString::number(angularStepSize);
-    this->sonarStepSize = angularStepSize;
-    this->currentSonarStepSize->setText(xstr);
+//void MainWindow::handleSonarStepSlider(int angularStepSize) {
+//    QString xstr = QString::number(angularStepSize);
+//    this->sonarStepSize = angularStepSize;
+//    this->currentSonarStepSize->setText(xstr);
+//
+//}
 
-}
+//void MainWindow::handleSonarStepReleased() {
+//    //send current distance to the Sonar
+////    std::cout << "sonarStepSize send to Sonar: " << this->sonarStepSize << std::endl;
+//    emit this->updateConfigSonar(this->sonarStepSize, this->sonarRange,this->frequencyRangeValue,this->numberOfSamplesValue);
+//}
 
-void MainWindow::handleSonarStepReleased() {
-    //send current distance to the Sonar
-//    std::cout << "sonarStepSize send to Sonar: " << this->sonarStepSize << std::endl;
-    emit this->updateConfigSonar(this->sonarStepSize, this->sonarRange,this->frequencyRangeValue,this->numberOfSamplesValue);
-}
+//void MainWindow::handleFrequencyRangeSlider(int angularStepSize) {
+//    QString xstr = QString::number(angularStepSize);
+//    this->frequencyRangeValue = angularStepSize;
+//    this->currentfrequencyRange->setText(xstr);
+////    std::cout << "0" << std::endl;
+//}
 
-void MainWindow::handleFrequencyRangeSlider(int angularStepSize) {
-    QString xstr = QString::number(angularStepSize);
-    this->frequencyRangeValue = angularStepSize;
-    this->currentfrequencyRange->setText(xstr);
-//    std::cout << "0" << std::endl;
-}
+//void MainWindow::handleFrequencyRangeReleased() {
+//    //send current distance to the Sonar
+////    std::cout << "sonarStepSize send to Sonar: " << this->sonarStepSize << std::endl;
+//    emit this->updateConfigSonar(this->sonarStepSize, this->sonarRange,this->frequencyRangeValue,this->numberOfSamplesValue);
+//
+//}
 
-void MainWindow::handleFrequencyRangeReleased() {
-    //send current distance to the Sonar
-//    std::cout << "sonarStepSize send to Sonar: " << this->sonarStepSize << std::endl;
-    emit this->updateConfigSonar(this->sonarStepSize, this->sonarRange,this->frequencyRangeValue,this->numberOfSamplesValue);
+//void MainWindow::handleNumberOfSamplesSlider(int angularStepSize) {
+//    QString xstr = QString::number(angularStepSize);
+//    this->numberOfSamplesValue = angularStepSize;
+//    this->currentNumberOfSamples->setText(xstr);
+////    std::cout << "0" << std::endl;
+//}
 
-}
-
-void MainWindow::handleNumberOfSamplesSlider(int angularStepSize) {
-    QString xstr = QString::number(angularStepSize);
-    this->numberOfSamplesValue = angularStepSize;
-    this->currentNumberOfSamples->setText(xstr);
-//    std::cout << "0" << std::endl;
-}
-
-void MainWindow::handleNumberOfSamplesReleased() {
-    //send current distance to the Sonar
-//    std::cout << "sonarStepSize send to Sonar: " << this->sonarStepSize << std::endl;
-    emit this->updateConfigSonar(this->sonarStepSize, this->sonarRange,this->frequencyRangeValue,this->numberOfSamplesValue);
-
-}
+//void MainWindow::handleNumberOfSamplesReleased() {
+//    //send current distance to the Sonar
+////    std::cout << "sonarStepSize send to Sonar: " << this->sonarStepSize << std::endl;
+//    emit this->updateConfigSonar(this->sonarStepSize, this->sonarRange,this->frequencyRangeValue,this->numberOfSamplesValue);
+//
+//}
 
 
 
@@ -339,8 +348,6 @@ void MainWindow::updateStateOfRobot(double xPos, double yPos, double zPos, doubl
 
 void MainWindow::updateDVLState(double distance1, double distance2, double distance3, double distance4){
 
-
-
     QString xstr = "Distance 1:    " + QString::number(distance1, 'f', 2);
     this->currentDistanceDVL1->setText(xstr);
     xstr = "Distance 2:    " + QString::number(distance2, 'f', 2);
@@ -349,5 +356,7 @@ void MainWindow::updateDVLState(double distance1, double distance2, double dista
     this->currentDistanceDVL3->setText(xstr);
     xstr = "Distance 4:    " + QString::number(distance4, 'f', 2);
     this->currentDistanceDVL4->setText(xstr);
+    xstr = "DVL distances:  " + QString::number((distance1+distance2+distance3+distance4)/4, 'f', 2);
+    this->currentDistanceToBottom->setText(xstr);
 
 }

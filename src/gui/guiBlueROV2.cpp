@@ -35,8 +35,14 @@ int main(int argc, char *argv[])
                      &mainWindow, &MainWindow::updateStateForPlotting,Qt::BlockingQueuedConnection);
     QObject::connect(&(*nodeShared), &rosHandlerGui::updateStateOfRobotROS,
                      &mainWindow, &MainWindow::updateStateOfRobot,Qt::AutoConnection);
-    QObject::connect(&(*nodeShared), &rosHandlerGui::updateSonarImageROS,
-                     &mainWindow, &MainWindow::updateSonarImage,Qt::BlockingQueuedConnection);
+
+    QObject::connect(&(*nodeShared), &rosHandlerGui::updatePing360SonarImageROS,
+                     &mainWindow, &MainWindow::updatePing360SonarImage, Qt::BlockingQueuedConnection);
+
+    QObject::connect(&(*nodeShared), &rosHandlerGui::updateMicronSonarImageROS,
+                     &mainWindow, &MainWindow::updateMicronSonarImage, Qt::BlockingQueuedConnection);
+
+
     QObject::connect(&(*nodeShared), &rosHandlerGui::updateCameraImageROS,
                      &mainWindow, &MainWindow::updateCameraImage,Qt::BlockingQueuedConnection);
     QObject::connect(&(*nodeShared), &rosHandlerGui::updateDVLStateROS,
@@ -46,17 +52,23 @@ int main(int argc, char *argv[])
 
     //GUI to ROS
     QObject::connect(&mainWindow, &MainWindow::updateDesiredState, &(*nodeShared), &rosHandlerGui::updateDesiredState,Qt::AutoConnection);
-//    QObject::connect(&mainWindow, &MainWindow::resetEKFEstimator, &(*nodeShared), &rosHandlerGui::resetEKFEstimator,Qt::AutoConnection);
+    QObject::connect(&mainWindow, &MainWindow::resetEKFEstimator, &(*nodeShared), &rosHandlerGui::resetEKFEstimator,Qt::AutoConnection);
 //    QObject::connect(&mainWindow, &MainWindow::updateConfigSonar, &(*nodeShared), &rosHandlerGui::updateConfigSonar,Qt::AutoConnection);
     QObject::connect(&mainWindow, &MainWindow::updateAngleCamera, &(*nodeShared), &rosHandlerGui::updateAngleCamera,Qt::AutoConnection);
     QObject::connect(&mainWindow, &MainWindow::updateLightIntensity, &(*nodeShared), &rosHandlerGui::updateLightIntensity,Qt::AutoConnection);
 
 
+//    rclcpp::spin(nodeShared);
+    rclcpp::executors::MultiThreadedExecutor executor;
+    executor.add_node(nodeShared);
+//    executor.spin();
+    std::thread executor_thread(std::bind(&rclcpp::executors::MultiThreadedExecutor::spin, &executor));
+
 
     mainWindow.showMaximized();
 
     app.exec();
-    rclcpp::spin(nodeShared);
+
 
     rclcpp::shutdown();
 
