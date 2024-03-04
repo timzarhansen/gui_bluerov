@@ -55,7 +55,7 @@ public:
                 &rosHandlerGui::micronImageCallback, this, std::placeholders::_1));
 //        subscriberCameraImage = this->create_subscription("cv_camera/image_raw",1000,&rosHandlerGui::cameraImageCallback,this);
         this->subscriberCameraImage = this->create_subscription<sensor_msgs::msg::CompressedImage>(
-                "camera/image_raw/compressed", qos,
+                "image_raw/compressed", qos,
                 std::bind(&rosHandlerGui::cameraImageCallback, this, std::placeholders::_1));
         std::cout << "starting ros stuff" << std::endl;
         this->subscriberDVL = this->create_subscription<waterlinked_a50::msg::TransducerReportStamped>(

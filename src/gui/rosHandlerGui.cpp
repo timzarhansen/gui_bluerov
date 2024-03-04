@@ -137,7 +137,7 @@ void rosHandlerGui::updateDesiredState(double desiredHeight, double desiredRoll,
 
     //this just sends the data to ros, the frame rate is made by mainwindow
     commonbluerovmsg::msg::DesiredStateForRobot msg;
-    msg.timestamp = rclcpp::Clock(RCL_ROS_TIME).now().nanoseconds();;
+    msg.timestamp = rclcpp::Clock(RCL_ROS_TIME).now().nanoseconds();
     msg.desired_height = desiredHeight;
     msg.desired_roll = desiredRoll;
     msg.desired_pitch = desiredPitch;

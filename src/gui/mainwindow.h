@@ -33,7 +33,7 @@ public:
         this->desiredYMovement = 0;
         this->holdPositionStatus = false;
 
-        this->initializationSonarWindows(xposRangeSonar, yposRangeSonar, screenWidth, sizeOfSlider);
+//        this->initializationSonarWindows(xposRangeSonar, yposRangeSonar, screenWidth, sizeOfSlider);
         this->initializationCurrentPosition(screenWidth);
         this->initializationPing360Image(screenWidth);
         this->initializationMicronImage(screenWidth);
