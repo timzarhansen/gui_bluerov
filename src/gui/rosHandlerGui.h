@@ -72,9 +72,9 @@ public:
         this->clientEKF = this->create_client<commonbluerovmsg::srv::ResetEkf>("resetCurrentEKF");
 
 //        clientSonar = n_.serviceClient<ping360_sonar::srv::sendingSonarConfig>("changeParametersSonar");
-        this->clientLight = this->create_client<commonbluerovmsg::srv::LightDensity>("set_light_of_leds_0_to_10");
+        this->clientLight = this->create_client<commonbluerovmsg::srv::LightDensity>("light_service");
         this->clientCameraAngle = this->create_client<commonbluerovmsg::srv::CameraAngle>(
-                "set_angle_of_camera_0_to_180");
+                "camera_angle_service");
     }
     //double xPositionRobot,yPositionRobot;
 public slots:
