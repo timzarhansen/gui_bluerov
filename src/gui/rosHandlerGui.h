@@ -28,6 +28,7 @@
 #include <Eigen/StdVector>
 #include <thread>
 #include "commonbluerovmsg/msg/desired_state_for_robot.hpp"
+#include "commonbluerovmsg/msg/leakage_detection.hpp"
 
 #include <commonbluerovmsg/srv/reset_ekf.hpp>
 //#include <ping360_sonar/msg/sendingSonarConfig.h>
@@ -61,6 +62,12 @@ public:
         this->subscriberDVL = this->create_subscription<waterlinked_a50::msg::TransducerReportStamped>(
                 "/velocity_estimate", qos, std::bind(&rosHandlerGui::DVLCallback, this, std::placeholders::_1));
 
+        this->subscriberLeakageTopTube = this->create_subscription<commonbluerovmsg::msg::LeakageDetection>(
+                "/leakage_status_top_tube", qos, std::bind(&rosHandlerGui::leakageTopTubeCallback, this, std::placeholders::_1));
+
+        this->subscriberLeakageSensorTube = this->create_subscription<commonbluerovmsg::msg::LeakageDetection>(
+                "/leakage_status_sensor_tube", qos, std::bind(&rosHandlerGui::leakageSensorTubeCallback, this, std::placeholders::_1));
+
 //        this->publishingDesiredState =
 //                this->create_publisher<commonbluerovmsg::msg::DesiredStateForRobot>("desiredStateOfBluerov2", qos);
         this->publishingDesiredState = this->create_publisher<commonbluerovmsg::msg::DesiredStateForRobot>(
@@ -69,7 +76,9 @@ public:
 
 
 
-        this->clientEKF = this->create_client<commonbluerovmsg::srv::ResetEkf>("resetCurrentEKF");
+
+
+        this->clientEKF = this->create_client<commonbluerovmsg::srv::ResetEkf>("power_control_bottom_service");
 
 //        clientSonar = n_.serviceClient<ping360_sonar::srv::sendingSonarConfig>("changeParametersSonar");
         this->clientLight = this->create_client<commonbluerovmsg::srv::LightDensity>("light_service");
@@ -106,6 +115,10 @@ signals:
                                Eigen::MatrixXd covariance);//covariance is just 6 values
     void updateDVLStateROS(double distance1, double distance2, double distance3, double distance4);
 
+    void updateLeakageStatusTopTubeROS(bool leakageStatus);
+
+    void updateLeakageStatusSensorTubeROS(bool leakageStatus);
+
 private:
     double angleOfCamera, intensityOfLight, currentDepth, distanceToBottom;
 //        std::vector<double> xPositionRobot,yPositionRobot,yawPositionRobot;
@@ -116,6 +129,8 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscriberMicronSonarImage;
     rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr subscriberCameraImage;
     rclcpp::Subscription<waterlinked_a50::msg::TransducerReportStamped>::SharedPtr subscriberDVL;
+    rclcpp::Subscription<commonbluerovmsg::msg::LeakageDetection>::SharedPtr subscriberLeakageTopTube;
+    rclcpp::Subscription<commonbluerovmsg::msg::LeakageDetection>::SharedPtr subscriberLeakageSensorTube;
 
     //std::atomic<double> desiredHeight, desiredRoll,desiredPitch, desiredYaw, desiredXMovement, desiredYMovement;
     rclcpp::Publisher<commonbluerovmsg::msg::DesiredStateForRobot>::SharedPtr publishingDesiredState;
@@ -138,6 +153,11 @@ private:
     void cameraImageCallback(const sensor_msgs::msg::CompressedImage::SharedPtr msg);
 
     void DVLCallback(const waterlinked_a50::msg::TransducerReportStamped::SharedPtr msg);
+
+    void leakageTopTubeCallback(const commonbluerovmsg::msg::LeakageDetection::SharedPtr msg);
+
+    void leakageSensorTubeCallback(const commonbluerovmsg::msg::LeakageDetection::SharedPtr msg);
+
 
 public:
     Eigen::Vector3d getRollPitchYaw(Eigen::Quaterniond quat) {

@@ -48,6 +48,10 @@ int main(int argc, char *argv[])
     QObject::connect(&(*nodeShared), &rosHandlerGui::updateDVLStateROS,
                      &mainWindow, &MainWindow::updateDVLState,Qt::AutoConnection);
 
+    QObject::connect(&(*nodeShared), &rosHandlerGui::updateLeakageStatusTopTubeROS,
+                     &mainWindow, &MainWindow::updateLeakageStatusTopTube,Qt::AutoConnection);
+    QObject::connect(&(*nodeShared), &rosHandlerGui::updateLeakageStatusSensorTubeROS,
+                     &mainWindow, &MainWindow::updateLeakageStatusSensorTube,Qt::AutoConnection);
 
 
     //GUI to ROS

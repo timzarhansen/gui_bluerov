@@ -41,6 +41,18 @@ void rosHandlerGui::positionCallback(const geometry_msgs::msg::PoseWithCovarianc
 }
 
 
+void rosHandlerGui::leakageTopTubeCallback(const commonbluerovmsg::msg::LeakageDetection::SharedPtr msg) {
+//    std::cout << "test" << std::endl;
+//    msg->leakage_detected
+    emit updateLeakageStatusTopTubeROS(msg->leakage_detected);
+}
+
+void rosHandlerGui::leakageSensorTubeCallback(const commonbluerovmsg::msg::LeakageDetection::SharedPtr msg) {
+//    std::cout << "test" << std::endl;
+//    msg->leakage_detected
+    emit updateLeakageStatusSensorTubeROS(msg->leakage_detected);
+}
+
 void rosHandlerGui::DVLCallback(const waterlinked_a50::msg::TransducerReportStamped::SharedPtr msg) {
 //    std::cout << "test" << std::endl;
 
@@ -145,7 +157,7 @@ void rosHandlerGui::updateDesiredState(double desiredHeight, double desiredRoll,
     msg.desired_yaw = desiredYaw;
     msg.desired_y_thrust = desiredYMovement;
     msg.hold_position = holdPosition;
-    publishingDesiredState->publish(msg);
+    this->publishingDesiredState->publish(msg);
 
 }
 

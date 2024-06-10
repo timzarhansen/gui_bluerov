@@ -42,6 +42,15 @@ public:
         this->initializationGamepad(screenWidth);
         this->initializationSliderXYStrength(screenWidth, sizeOfSlider);
 
+//        QPalette sample_palette;
+//        sample_palette.setColor(QPalette::Window, Qt::red);
+//        sample_palette.setColor(QPalette::WindowText, Qt::blue);
+
+        this->leakageTopButton = new QPushButton("Leakage Top", this);
+        this->leakageTopButton->setGeometry(QRect(QPoint(600, 120), QSize(200, 50)));
+
+        this->leakageSensorButton = new QPushButton("Leakage Sensor", this);
+        this->leakageSensorButton->setGeometry(QRect(QPoint(800, 120), QSize(200, 50)));
 
     }
 
@@ -166,6 +175,10 @@ public slots:
 
     void updateDVLState(double distance1, double distance2, double distance3, double distance4);
 
+    void updateLeakageStatusTopTube(bool leakageStatus);
+
+    void updateLeakageStatusSensorTube(bool leakageStatus);
+
     void updateRightX(double value);
 
     void updateRightY(double value);
@@ -232,7 +245,7 @@ private:
     QLabel *lightLabel, *currentLightIntensity, *lightTicks;
 //    QLabel *numberOfSamplesLabel, *numberOfSamplesTicks, *currentNumberOfSamples;
 //    QLabel *frequencyRangeLabel, *frequencyRangeTicks, *currentfrequencyRange;
-    QPushButton *resetEKF, *holdPos, *resetGraphEKF;
+    QPushButton *resetEKF, *holdPos, *resetGraphEKF, *leakageTopButton, *leakageSensorButton;
     QSlider *strengthXYMovementSlider, *lightSlider, *cameraAngleSlider;
 //    QSlider *rangeSonarSlider, *angularStepSizeSlider, , , *strengthXYMovementSlider, *numberOfSamplesSlider, *frequencyRangeSlider;
     int sonarStepSize, lightIntensity, cameraAngleDesired, frequencyRangeValue, numberOfSamplesValue;

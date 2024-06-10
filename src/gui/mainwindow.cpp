@@ -9,16 +9,16 @@
 void MainWindow::updateStateForPlotting(std::vector<double> xPositionRobot, std::vector<double> yPositionRobot,
                                         std::vector<double> yawPositionRobot) {
 
-    if(xPositionRobot.size()>300){
+    if (xPositionRobot.size() > 300) {
 
-        int everyNthElement= xPositionRobot.size()/300;
-        this->xPositionRobot = this->keepEveryNthElementWithAverage(xPositionRobot,everyNthElement,50);
-        this->yPositionRobot = this->keepEveryNthElementWithAverage(yPositionRobot,everyNthElement,50);
-        this->yawPositionRobot = this->keepEveryNthElementWithAverage(yawPositionRobot,everyNthElement,50);
-    }else{
-        this->xPositionRobot = this->keepEveryNthElementWithAverage(xPositionRobot,1,0);
-        this->yPositionRobot = this->keepEveryNthElementWithAverage(yPositionRobot,1,0);
-        this->yawPositionRobot = this->keepEveryNthElementWithAverage(yawPositionRobot,1,0);
+        int everyNthElement = xPositionRobot.size() / 300;
+        this->xPositionRobot = this->keepEveryNthElementWithAverage(xPositionRobot, everyNthElement, 50);
+        this->yPositionRobot = this->keepEveryNthElementWithAverage(yPositionRobot, everyNthElement, 50);
+        this->yawPositionRobot = this->keepEveryNthElementWithAverage(yawPositionRobot, everyNthElement, 50);
+    } else {
+        this->xPositionRobot = this->keepEveryNthElementWithAverage(xPositionRobot, 1, 0);
+        this->yPositionRobot = this->keepEveryNthElementWithAverage(yPositionRobot, 1, 0);
+        this->yawPositionRobot = this->keepEveryNthElementWithAverage(yawPositionRobot, 1, 0);
     }
 
 
@@ -54,7 +54,6 @@ void MainWindow::updateMicronSonarImage(QPixmap sonarImage) {
 }
 
 
-
 void MainWindow::updateCameraImage(QPixmap cameraImage) {
     this->cameraImageLabel->setPixmap(
             cameraImage.scaled(ping360SonarLabel->width(), ping360SonarLabel->height(), Qt::KeepAspectRatio));
@@ -77,8 +76,8 @@ void MainWindow::updateCameraImage(QPixmap cameraImage) {
 //}
 
 void MainWindow::handleStrengthXYMovementSlider(int strength) {
-    QString xstr = QString::number(((double) strength)/10.0);
-    this->strengthXYMovement = ((double) strength)/10.0;
+    QString xstr = QString::number(((double) strength) / 10.0);
+    this->strengthXYMovement = ((double) strength) / 10.0;
 //    std::cout << this->strengthXYMovement << std::endl;
     this->currentStrengthXYMovement->setText(xstr);
 }
@@ -142,12 +141,12 @@ void MainWindow::handleResetEKFGraph() {
 
 void MainWindow::handleHoldPosition() {
     std::cout << "send hold Position" << std::endl;
-    this->holdPositionStatus= not this->holdPositionStatus;
+    this->holdPositionStatus = not this->holdPositionStatus;
 
     QPalette pal = this->holdPos->palette();
-    if(this->holdPositionStatus){
+    if (this->holdPositionStatus) {
         pal.setColor(QPalette::Button, QColor(Qt::green));
-    }else{
+    } else {
         pal.setColor(QPalette::Button, QColor(Qt::red));
 
         double tmpNumber = this->currentYaw;
@@ -158,6 +157,8 @@ void MainWindow::handleHoldPosition() {
     this->holdPos->setFlat(true);
     this->holdPos->setPalette(pal);
     this->holdPos->update();
+
+
 
 }
 
@@ -191,7 +192,7 @@ void MainWindow::handleCameraAngleSliderReleased() {
 //move x body axis
 void MainWindow::updateRightX(double value) {
 //    std::cout << "Right X: " << value << std::endl;
-    this->desiredYMovement = 0.5*this->strengthXYMovement * value;
+    this->desiredYMovement = 0.5 * this->strengthXYMovement * value;
     QString xstr = "Thrust Y: " + QString::number(this->desiredYMovement, 'f', 2);
     this->currentYThrustLabel->setText(xstr);
 }
@@ -199,7 +200,7 @@ void MainWindow::updateRightX(double value) {
 //move y body axis
 void MainWindow::updateRightY(double value) {
 //    std::cout << "Right Y: " << value << std::endl;
-    this->desiredXMovement = -0.3*this->strengthXYMovement * value;
+    this->desiredXMovement = -0.3 * this->strengthXYMovement * value;
     QString xstr = "Thrust X: " + QString::number(this->desiredXMovement, 'f', 2);
     this->currentXThrustLabel->setText(xstr);
 }
@@ -208,7 +209,7 @@ void MainWindow::updateRightY(double value) {
 void MainWindow::updateLeftX(double value) {
 //    std::cout << "Left X: " << value << std::endl;
     double stepSize = 0.02;
-    if(abs(value)>0.05){
+    if (abs(value) > 0.05) {
         this->desiredYaw = this->desiredYaw + stepSize * value;
     }
     //make sure to hold yaw in range of +- pi
@@ -299,7 +300,7 @@ void MainWindow::updateR1Button(bool pressed) {
 //height -
 void MainWindow::updateR2Button(double pressedValue) {
 //    std::cout << "R2 button Pressed: " << pressedValue << std::endl;
-    if (pressedValue>0.2) {
+    if (pressedValue > 0.2) {
         if (abs(this->desiredHeight + 0.02 - this->currentHeight) < 10.0f) {
             this->desiredHeight = this->desiredHeight + 0.02;
         }
@@ -322,7 +323,7 @@ void MainWindow::updateStateOfRobot(double xPos, double yPos, double zPos, doubl
     this->currentRoll = roll;
     this->currentPitch = pitch;
     this->currentYaw = yaw;
-    xstr = "Yaw: " + QString::number(this->currentYaw*180/M_PI, 'f', 2);
+    xstr = "Yaw: " + QString::number(this->currentYaw * 180 / M_PI, 'f', 2);
     this->currentPositionYawLabel->setText(xstr);
     this->currentPositionYLabel->update();
 //    std::cout<< "AFTER UPDATE YAW CURRENT" << std::endl;
@@ -337,16 +338,16 @@ void MainWindow::updateStateOfRobot(double xPos, double yPos, double zPos, doubl
     xstr = "Y: " + QString::number(this->currentYPos, 'f', 2);
     this->currentPositionYLabel->setText(xstr);
 
-    xstr = "Roll: " + QString::number(roll, 'f', 2);
+    xstr = "Roll: " + QString::number(this->currentRoll* 180 / M_PI, 'f', 2);
     this->currentPositionRollLabel->setText(xstr);
 
-    xstr = "Pitch: " + QString::number(pitch, 'f', 2);
+    xstr = "Pitch: " + QString::number(this->currentPitch* 180 / M_PI, 'f', 2);
     this->currentPositionPitchLabel->setText(xstr);
 
 }
 
 
-void MainWindow::updateDVLState(double distance1, double distance2, double distance3, double distance4){
+void MainWindow::updateDVLState(double distance1, double distance2, double distance3, double distance4) {
 
     QString xstr = "Distance 1:    " + QString::number(distance1, 'f', 2);
     this->currentDistanceDVL1->setText(xstr);
@@ -356,7 +357,40 @@ void MainWindow::updateDVLState(double distance1, double distance2, double dista
     this->currentDistanceDVL3->setText(xstr);
     xstr = "Distance 4:    " + QString::number(distance4, 'f', 2);
     this->currentDistanceDVL4->setText(xstr);
-    xstr = "DVL distances:  " + QString::number((distance1+distance2+distance3+distance4)/4, 'f', 2);
+    xstr = "DVL distances:  " + QString::number((distance1 + distance2 + distance3 + distance4) / 4, 'f', 2);
     this->currentDistanceToBottom->setText(xstr);
 
 }
+
+void MainWindow::updateLeakageStatusTopTube(bool leakageStatus) {
+
+    QPalette pal1 = this->leakageTopButton->palette();
+
+    if(leakageStatus){
+        pal1.setColor(QPalette::Button, QColor(Qt::red));
+    }else{
+        pal1.setColor(QPalette::Button, QColor(Qt::green));
+    }
+    this->leakageTopButton->setAutoFillBackground(true);
+    this->leakageTopButton->setFlat(true);
+    this->leakageTopButton->setPalette(pal1);
+    this->leakageTopButton->update();
+
+}
+
+void MainWindow::updateLeakageStatusSensorTube(bool leakageStatus) {
+
+    QPalette pal1 = this->leakageSensorButton->palette();
+
+    if(leakageStatus){
+        pal1.setColor(QPalette::Button, QColor(Qt::red));
+    }else{
+        pal1.setColor(QPalette::Button, QColor(Qt::green));
+    }
+    this->leakageSensorButton->setAutoFillBackground(true);
+    this->leakageSensorButton->setFlat(true);
+    this->leakageSensorButton->setPalette(pal1);
+    this->leakageSensorButton->update();
+
+}
+
