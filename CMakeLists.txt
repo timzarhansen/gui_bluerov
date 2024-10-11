@@ -37,7 +37,6 @@ find_package(Qt5PrintSupport REQUIRED)
 add_executable(guibluerov2 src/gui/guiBlueROV2.cpp src/gui/mainwindow.h src/gui/mainwindow.cpp src/gui/rosHandlerGui.cpp src/gui/rosHandlerGui.h src/gui/qcustomplot.h src/gui/qcustomplot.cpp)
 ament_target_dependencies(guibluerov2 rclcpp std_msgs sensor_msgs commonbluerovmsg tf2 Eigen3 cv_bridge waterlinked_a50)
 target_link_libraries(guibluerov2 Qt5::Core Qt5::Gui Qt5::Widgets Qt5::PrintSupport Qt5::Gamepad)
-set_target_properties(guibluerov2 PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 
 install(TARGETS
